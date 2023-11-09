@@ -20,6 +20,8 @@ use url::Url;
 // use chrono::DateTime;
 use chrono::Utc;
 use protocol::public_key;
+use crate::DbConn;
+
 
 #[derive(Deserialize, Serialize)]
 pub struct Color {
@@ -120,6 +122,9 @@ impl Pixel {
             placed_by: PixelCreator::System,
             time: Utc::now(),
         };
+    }
+    fn new_place(activity: CreateActivity, conn: &DbConn) {
+        
     }
 }
 
