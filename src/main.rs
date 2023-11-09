@@ -9,8 +9,7 @@ mod task;
 #[cfg(test)]
 mod tests;
 
-use fediplace::{Color, CreateActivity};
-// use fediplace::canvas;
+use fediplace::CreateActivity;
 use rocket::{
     fairing::AdHoc,
     form::Form,
@@ -19,7 +18,7 @@ use rocket::{
     response::{Flash, Redirect},
     serde::json::{self, Json},
     serde::{Deserialize, Serialize},
-    tokio::time::{sleep, Duration},
+    // tokio::time::{sleep, Duration},
     Build, Rocket,
 };
 
@@ -103,11 +102,11 @@ async fn delete(id: i32, conn: DbConn) -> Result<Flash<Redirect>, Template> {
     }
 }
 
-#[get("/")]
-async fn index(flash: Option<FlashMessage<'_>>, conn: DbConn) -> Template {
-    let flash = flash.map(FlashMessage::into_inner);
-    Template::render("index", Context::raw(&conn, flash).await)
-}
+// #[get("/")]
+// async fn index(flash: Option<FlashMessage<'_>>, conn: DbConn) -> Template {
+//     let flash = flash.map(FlashMessage::into_inner);
+//     Template::render("index", Context::raw(&conn, flash).await)
+// }
 
 async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
     use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
@@ -127,7 +126,7 @@ async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
 }
 
 #[post("/@system/inbox", format = "json", data = "<create>")]
-fn inbox(create: Json<CreateActivity>) {
+async fn inbox(create: Json<CreateActivity>) {
     print!("recieved json data:");
     dbg!(create);
 }
