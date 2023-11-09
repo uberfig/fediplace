@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <title>{{ config.extra.site_name }}</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<nav>
+  <a class="logo" href="{{ get_url(path='/') }}">{{ config.extra.site_name }}</a>
+</nav>
+
+<body>
+  <section class="section">
+    <div class="container">
+      {% block content %} {% endblock %}
+    </div>
+  </section>
+</body>
+
+<footer role="contentinfo">
+  <div class="footflex">
+    <a rel="me" href="https://cutie.city/@ivy"><img src="/cutiecity.svg" alt="mastodon link"
+        style="width:32px;height:32px;"></a>
+    <a>Site © {{ config.extra.site_name }} {{ config.extra.year }}</a>
+  </div>
+</footer>
+
+</html>

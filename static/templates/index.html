@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+{# <p>{{ section.title }}</p> #}
+<div class="two_content">
+<article class="indexArticle">
+
+  <meta property="og:url" content="{{ current_url }}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Ivytime" />
+  <meta property="og:description" content="{{ section.description }}" />
+  {% if section.preview_img %}
+    <meta property="og:image" content="{{ section.preview_img }}" />
+  {% endif %}
+
+  
+
+
+</article>
+
+<aside>
+  <p>
+    right
+  </p>
+</aside>
+</div>
+
+{% endblock content %}
