@@ -1,5 +1,12 @@
 pub mod protocol;
 
+#[macro_use]
+extern crate rocket;
+#[macro_use]
+extern crate rocket_sync_db_pools;
+#[macro_use]
+extern crate diesel;
+
 use reqwest::Client;
 use reqwest::IntoUrl;
 use rocket::{
@@ -20,7 +27,54 @@ use url::Url;
 // use chrono::DateTime;
 use chrono::Utc;
 use protocol::public_key;
-use crate::DbConn;
+// use rocket::DbConn;
+
+// use crate::DbConn;
+#[database("sqlite_database")]
+pub struct DbConn(diesel::SqliteConnection);
+
+// use rocket::serde::Serialize;
+use diesel::{result::QueryResult, prelude::*};
+mod schema {
+    table! {
+        pallete {
+            id -> Integer,
+            r -> Integer,
+            g -> Integer,
+            b -> Integer,
+        }
+        
+    }
+    table! {
+        users {
+            db_id -> Integer,
+            id -> Text,
+            kind -> Text,
+            preferred_username -> Text,
+            name -> Text,
+            inbox -> Text,
+            outbox -> Text,
+            public_key -> Text,
+            last_placed -> Integer, //time they placed their last pixel
+        }
+    }
+    table! {
+        pixels {
+            id -> Integer,
+            x -> Integer,
+            y -> Integer,
+            color -> Integer,
+            user -> Integer,
+            time -> Integer,
+        }
+    }
+}
+
+use self::schema::{
+    pallete,
+    users,
+    pixels,
+};
 
 
 #[derive(Deserialize, Serialize)]
@@ -105,26 +159,26 @@ enum PixelCreator {
     System,
 }
 
+#[derive(Queryable, Debug, Clone)]
+// #[serde(crate = "rocket::serde")]
+#[diesel(table_name = pixels)]
 pub struct Pixel {
-    color: Color,
-    placed_by: PixelCreator,
+    id: u32,
+    x: u16,
+    y: u16,
+    color: u8,
+    user: u32,
     time: chrono::DateTime<chrono::Utc>,
 }
 
 impl Pixel {
-    fn newdebug() -> Pixel {
-        return Pixel {
-            color: Color {
-                r: 255,
-                g: 255,
-                b: 255,
-            },
-            placed_by: PixelCreator::System,
-            time: Utc::now(),
-        };
-    }
-    fn new_place(activity: CreateActivity, conn: &DbConn) {
-        
+    pub async fn new_place(activity: CreateActivity, conn: &DbConn) {
+        let bruh = activity.object.content.split_ascii_whitespace();
+        let x: Vec<&str> = bruh.collect();
+        // conn.run(|c| {
+        //     let t = Pixel { id: None, description: todo.description, completed: false };
+        //     diesel::insert_into(tasks::table).values(&t).execute(c)
+        // }).await
     }
 }
 

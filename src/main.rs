@@ -25,9 +25,9 @@ use rocket::{
 use rocket_dyn_templates::Template;
 
 use crate::task::{Task, Todo};
+use fediplace::DbConn;
 
-#[database("sqlite_database")]
-pub struct DbConn(diesel::SqliteConnection);
+
 
 #[derive(Debug, Serialize)]
 #[serde(crate = "rocket::serde")]
