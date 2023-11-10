@@ -1,3 +1,4 @@
 /target
 /db/db.sqlite
-/db/shim
+/db/db.sqlite-wal
+/db/db.sqlite-shm
