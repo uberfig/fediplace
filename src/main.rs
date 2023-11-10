@@ -9,7 +9,7 @@ mod task;
 #[cfg(test)]
 mod tests;
 
-use fediplace::{CreateActivity, Pixel};
+use fediplace::{CreateActivity, Pixel, Actor};
 use rocket::{
     fairing::AdHoc,
     form::Form,
@@ -130,6 +130,12 @@ async fn inbox(create: Json<CreateActivity>, conn: DbConn) {
     print!("recieved json data:");
     dbg!(&create);
     Pixel::new_place(create.into_inner(), &conn).await;
+}
+#[get("/@system")]
+async fn system() -> serde_json::Value {
+    let A = Actor{id:1,kind:fediplace::PersonType::Application, preferred_username: todo!(), name: todo!(), inbox: todo!(), outbox: todo!(), public_key: todo!() };
+    let j = serde_json::json!(&A);
+    return j.;
 }
 
 // #[get("/canvas")]

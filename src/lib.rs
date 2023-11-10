@@ -113,7 +113,7 @@ pub async fn get_person(user: impl IntoUrl) -> reqwest::Result<Actor> {
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(crate = "rocket::serde")]
-enum PersonType {
+pub enum PersonType {
     Person,
     Application,
 }
@@ -131,6 +131,15 @@ pub struct Actor {
     outbox: Url,
     public_key: public_key::PublicKey,
 }
+impl Actor {
+    fn system() -> Self {
+        let actorid = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system");
+        let actorid = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system");
+        Actor { id: Url::parse(&actorid).unwrap(), kind: PersonType::Application, 
+        preferred_username: String::from("system"), name: String::from("fediplace"), inbox: , outbox: (), public_key: () }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(crate = "rocket::serde")]
 enum ActivityType {
