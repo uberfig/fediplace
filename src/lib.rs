@@ -230,10 +230,11 @@ impl Pixel {
         let y = data.y as i32;
         let color = data.color as i32;
 
-        conn.run(move |c| {
+        let dberr = conn.run(move |c| {
             let p = Pixel { id: id as i32, x: x, y: y, color: color, user: 1, /* insert_time: SystemTime::now().as_sql() */};
             diesel::insert_into(pixels::dsl::pixels).values(&p).execute(c)
         }).await;
+        dbg!(dberr);
         dbg!(&data);
         Ok(data)
     }
