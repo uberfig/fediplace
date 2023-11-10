@@ -9,7 +9,7 @@ mod task;
 #[cfg(test)]
 mod tests;
 
-use fediplace::CreateActivity;
+use fediplace::{CreateActivity, Pixel};
 use rocket::{
     fairing::AdHoc,
     form::Form,
@@ -126,9 +126,10 @@ async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
 }
 
 #[post("/@system/inbox", format = "json", data = "<create>")]
-async fn inbox(create: Json<CreateActivity>) {
+async fn inbox(create: Json<CreateActivity>, conn: DbConn) {
     print!("recieved json data:");
-    dbg!(create);
+    dbg!(&create);
+    Pixel::new_place(create.into_inner(), &conn).await;
 }
 
 // #[get("/canvas")]

@@ -8,7 +8,7 @@ curl -H 'Content-Type: application/json' \
     "id": "https://example.com/~mallory/note/72",
     "type": "Note",
     "attributedTo": "https://example.net/~mallory",
-    "content": "@system@place.ivytime.gay 4, 5 8",
+    "content": "@system@place.ivytime.gay 4 5 8",
     "published": "2015-02-10T15:04:55Z",
     "to": ["https://example.org/~john/"],
     "cc": ["https://example.com/~erik/followers",

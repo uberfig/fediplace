@@ -1,3 +1,5 @@
+#![recursion_limit="512"]
+
 pub mod protocol;
 
 #[macro_use]
@@ -7,8 +9,14 @@ extern crate rocket_sync_db_pools;
 #[macro_use]
 extern crate diesel;
 
+use std::time::{SystemTime, UNIX_EPOCH};
+use chrono::DateTime;
+use chrono::NaiveDateTime;
 use reqwest::Client;
 use reqwest::IntoUrl;
+use rocket::data;
+use rocket::time::PrimitiveDateTime;
+use rocket::tokio::io::unix;
 use rocket::{
     fairing::AdHoc,
     // serde::{Deserialize, Serialize},
@@ -34,8 +42,8 @@ use protocol::public_key;
 pub struct DbConn(diesel::SqliteConnection);
 
 // use rocket::serde::Serialize;
-use diesel::{result::QueryResult, prelude::*};
-mod schema {
+use diesel::{prelude::*, result::QueryResult};
+pub mod schema {
     table! {
         pallete {
             id -> Integer,
@@ -43,7 +51,7 @@ mod schema {
             g -> Integer,
             b -> Integer,
         }
-        
+
     }
     table! {
         users {
@@ -65,17 +73,14 @@ mod schema {
             y -> Integer,
             color -> Integer,
             user -> Integer,
-            time -> Integer,
+            insert_time -> Timestamp,
         }
     }
 }
 
-use self::schema::{
-    pallete,
-    users,
-    pixels,
-};
-
+// use self::schema::{pallete::dsl::pallete, pixels::dsl::pixels, users::dsl::users};
+use self::schema::pixels;
+// use self::schema::pixels::dsl::pixels;
 
 #[derive(Deserialize, Serialize)]
 pub struct Color {
@@ -159,27 +164,85 @@ enum PixelCreator {
     System,
 }
 
-#[derive(Queryable, Debug, Clone)]
+#[derive(Serialize, Queryable, Insertable, Debug, Clone)]
 // #[serde(crate = "rocket::serde")]
 #[diesel(table_name = pixels)]
 pub struct Pixel {
-    id: u32,
+    id: i32,
+    x: i32,
+    y: i32,
+    color: i32,
+    user: i32,
+    // insert_time: SystemTime,
+}
+
+#[derive(Debug, Clone)]
+pub struct Fucky {
+    string: String,
     x: u16,
     y: u16,
     color: u8,
-    user: u32,
-    time: chrono::DateTime<chrono::Utc>,
+    // val4: i32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FuckyParseError{
+    WrongNumberOfArgs,
+    InvalidVal1,
+    InvalidVal2,
+    InvalidVal3,
+    InvalidVal4,
+}
+
+pub fn parse_fucky(data: &str) -> Result<Fucky, FuckyParseError> {
+    use FuckyParseError as E;
+    let vals: [&str; 4] = data
+        .split_whitespace()
+        // this is an uneeded allocation but it makes code easier
+        .collect::<Vec<&str>>()
+        .try_into()
+        .map_err(|_| E::WrongNumberOfArgs)?;
+
+    Ok(Fucky {
+        string: vals[0].to_string(),
+        x: vals[1].parse().map_err(|_|E::InvalidVal1)?,
+        y: vals[2].parse().map_err(|_|E::InvalidVal2)?,
+        color: vals[3].parse().map_err(|_|E::InvalidVal3)?,
+        // val4: vals[4].parse().map_err(|_|E::InvalidVal4)?,
+    })
 }
 
 impl Pixel {
-    pub async fn new_place(activity: CreateActivity, conn: &DbConn) {
-        let bruh = activity.object.content.split_ascii_whitespace();
-        let x: Vec<&str> = bruh.collect();
-        // conn.run(|c| {
-        //     let t = Pixel { id: None, description: todo.description, completed: false };
-        //     diesel::insert_into(tasks::table).values(&t).execute(c)
-        // }).await
+    pub async fn new_place(activity: CreateActivity, conn: &DbConn) -> Result<Fucky, FuckyParseError> {
+        use FuckyParseError as E;
+        let bruh = parse_fucky(&activity.object.content);
+        let data;
+        match bruh {
+            Ok(x) => data = x,
+            Err(y) => return Err(y),
+        }
+        let mut id: u32 = data.x.into();
+        id = id << 16;
+        id = id | data.y as u32;
+
+        // dbg!(&data);
+        let x = data.x as i32;
+        let y = data.y as i32;
+        let color = data.color as i32;
+
+        conn.run(move |c| {
+            let p = Pixel { id: id as i32, x: x, y: y, color: color, user: 1, /* insert_time: SystemTime::now().as_sql() */};
+            diesel::insert_into(pixels::dsl::pixels).values(&p).execute(c)
+        }).await;
+        dbg!(&data);
+        Ok(data)
     }
+    // pub async fn insert(todo: Todo, conn: &DbConn) -> QueryResult<usize> {
+    //     conn.run(|c| {
+    //         let t = Task { id: None, description: todo.description, completed: false };
+    //         diesel::insert_into(tasks::table).values(&t).execute(c)
+    //     }).await
+    // }
 }
 
 // pub fn get_pixel(x: u16, y: u16) -> Pixel {

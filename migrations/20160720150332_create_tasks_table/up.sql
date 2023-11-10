@@ -13,12 +13,13 @@ CREATE TABLE pallete (
 );
 
 CREATE TABLE pixels (
-	"x"	INTEGER NOT NULL UNIQUE,
-	"y"	INTEGER NOT NULL UNIQUE,
-	"color"	INTEGER NOT NULL DEFAULT 0,
-	"user"	INTEGER NOT NULL DEFAULT -1,
-	"time"	INTEGER NOT NULL,
-	PRIMARY KEY("x","y")
+	id INTEGER NOT NULL UNIQUE,
+	x	INTEGER NOT NULL,
+	y	INTEGER NOT NULL,
+	color	INTEGER NOT NULL DEFAULT 0,
+	user	INTEGER NOT NULL DEFAULT -1,
+	insert_time DATETIME NOT NULL,
+	PRIMARY KEY("id")
 );
 
 CREATE TABLE users (
@@ -35,3 +36,5 @@ CREATE TABLE users (
 
 INSERT INTO tasks (description) VALUES ("demo task");
 INSERT INTO tasks (description) VALUES ("demo task2");
+
+
