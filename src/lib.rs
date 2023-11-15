@@ -122,14 +122,14 @@ pub enum PersonType {
 #[serde(crate = "rocket::serde")]
 #[serde(rename_all = "camelCase")]
 pub struct Actor {
-    id: Url,
+    pub id: Url,
     #[serde(rename = "type")]
-    kind: PersonType,
-    preferred_username: String,
-    name: String,
-    inbox: Url,
-    outbox: Url,
-    public_key: public_key::PublicKey,
+    pub kind: PersonType,
+    pub preferred_username: String,
+    pub name: String,
+    pub inbox: Url,
+    pub outbox: Url,
+    pub public_key: public_key::PublicKey,
 }
 impl Actor {
     fn system() -> Self {
