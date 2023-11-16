@@ -135,7 +135,7 @@ async fn inbox(create: Json<CreateActivity>, conn: DbConn) {
 async fn system() -> serde_json::Value {
     let A = Actor{id:1,kind:fediplace::PersonType::Application, preferred_username: todo!(), name: todo!(), inbox: todo!(), outbox: todo!(), public_key: todo!() };
     let j = serde_json::json!(&A);
-    return j.;
+    return j;
 }
 
 // #[get("/canvas")]

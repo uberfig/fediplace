@@ -134,9 +134,10 @@ pub struct Actor {
 impl Actor {
     fn system() -> Self {
         let actorid = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system");
-        let actorid = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system");
-        Actor { id: Url::parse(&actorid).unwrap(), kind: PersonType::Application, 
-        preferred_username: String::from("system"), name: String::from("fediplace"), inbox: , outbox: (), public_key: () }
+        let actorinbox = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system/inbox");
+        let actoroutbox = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system/outbox");
+        Actor { id: Url::parse(&actorid).unwrap(), kind: PersonType::Person, 
+        preferred_username: String::from("system"), name: String::from("fediplace"), inbox: Url::parse(&actorinbox).unwrap(), outbox: Url::parse(&actoroutbox).unwrap(), public_key: () }
     }
 }
 
