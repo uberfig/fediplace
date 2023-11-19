@@ -73,7 +73,7 @@ pub mod schema {
             y -> Integer,
             color -> Integer,
             user -> Integer,
-            insert_time -> Timestamp,
+            // insert_time -> Timestamp,
         }
     }
 }
@@ -174,7 +174,7 @@ enum PixelCreator {
     System,
 }
 
-#[derive(Serialize, Queryable, Insertable, Debug, Clone)]
+#[derive(Serialize, Queryable, Insertable, Debug, Clone, Selectable)]
 // #[serde(crate = "rocket::serde")]
 #[diesel(table_name = pixels)]
 pub struct Pixel {
@@ -189,10 +189,9 @@ pub struct Pixel {
 #[derive(Debug, Clone)]
 pub struct Fucky {
     pub string: String,
-    x: u16,
-    y: u16,
-    color: u8,
-    // val4: i32,
+    pub x: u16,
+    pub y: u16,
+    pub color: u8,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -209,10 +208,10 @@ impl std::fmt::Display for FuckyParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
        match self {
         FuckyParseError::WrongNumberOfArgs => write!(f, "Incorrect Number Of args"),
-        FuckyParseError::InvalidVal1 => todo!(),
-        FuckyParseError::InvalidVal2 => todo!(),
-        FuckyParseError::InvalidVal3 => todo!(),
-        FuckyParseError::InvalidVal4 => todo!(),
+        FuckyParseError::InvalidVal1 => write!(f, "somehow you managed to break the leading string >~<"),
+        FuckyParseError::InvalidVal2 => write!(f, "X value is invalid"),
+        FuckyParseError::InvalidVal3 => write!(f, "Y value is invalid"),
+        FuckyParseError::InvalidVal4 => write!(f, "Color value is invalid"),
     }
     }
 }

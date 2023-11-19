@@ -18,7 +18,7 @@ CREATE TABLE pixels (
 	y	INTEGER NOT NULL,
 	color	INTEGER NOT NULL DEFAULT 0,
 	user	INTEGER NOT NULL DEFAULT -1,
-	insert_time DATETIME,
+	-- insert_time DATETIME,
 	PRIMARY KEY("id")
 );
 
