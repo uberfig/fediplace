@@ -204,6 +204,19 @@ pub enum FuckyParseError{
     InvalidVal4,
 }
 
+
+impl std::fmt::Display for FuckyParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+       match self {
+        FuckyParseError::WrongNumberOfArgs => write!(f, "Incorrect Number Of args"),
+        FuckyParseError::InvalidVal1 => todo!(),
+        FuckyParseError::InvalidVal2 => todo!(),
+        FuckyParseError::InvalidVal3 => todo!(),
+        FuckyParseError::InvalidVal4 => todo!(),
+    }
+    }
+}
+
 pub fn parse_fucky(data: &str) -> Result<Fucky, FuckyParseError> {
     use FuckyParseError as E;
     let vals: [&str; 4] = data

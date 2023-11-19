@@ -132,8 +132,10 @@ async fn inbox(create: Json<CreateActivity>, conn: DbConn) -> status::Accepted<S
     dbg!(&create);
     let works = Pixel::new_place(create.into_inner(), &conn).await;
     match works {
-    Ok(fuck) => return  status::Accepted(Some(format!("placed with {}",fuck.string))),
-    Err(_) => todo!(),
+    Ok(fuck) => return status::Accepted(Some(format!("placed with {}",fuck.string))),
+    Err(e) => {
+        return status::Accepted(Some(format!("unable to parse err: {}", e)))
+    },
 }
 }
 
