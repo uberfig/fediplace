@@ -129,15 +129,15 @@ pub struct Actor {
     pub name: String,
     pub inbox: Url,
     pub outbox: Url,
-    pub public_key: public_key::PublicKey,
+    pub public_key: Option<public_key::PublicKey>,
 }
 impl Actor {
-    fn system() -> Self {
+    pub fn system() -> Self {
         let actorid = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system");
         let actorinbox = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system/inbox");
         let actoroutbox = format!("{host}/{id}\n", host = "http://localhost:8000", id = "@system/outbox");
         Actor { id: Url::parse(&actorid).unwrap(), kind: PersonType::Person, 
-        preferred_username: String::from("system"), name: String::from("fediplace"), inbox: Url::parse(&actorinbox).unwrap(), outbox: Url::parse(&actoroutbox).unwrap(), public_key: () }
+        preferred_username: String::from("system"), name: String::from("fediplace"), inbox: Url::parse(&actorinbox).unwrap(), outbox: Url::parse(&actoroutbox).unwrap(), public_key: None }
     }
 }
 
@@ -188,7 +188,7 @@ pub struct Pixel {
 
 #[derive(Debug, Clone)]
 pub struct Fucky {
-    string: String,
+    pub string: String,
     x: u16,
     y: u16,
     color: u8,

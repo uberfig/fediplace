@@ -20,6 +20,7 @@ use rocket::{
     serde::{Deserialize, Serialize},
     // tokio::time::{sleep, Duration},
     Build, Rocket,
+    response::status,
 };
 
 use rocket_dyn_templates::Template;
@@ -126,14 +127,19 @@ async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
 }
 
 #[post("/@system/inbox", format = "json", data = "<create>")]
-async fn inbox(create: Json<CreateActivity>, conn: DbConn) {
+async fn inbox(create: Json<CreateActivity>, conn: DbConn) -> status::Accepted<String> {
     print!("recieved json data:");
     dbg!(&create);
-    Pixel::new_place(create.into_inner(), &conn).await;
+    let works = Pixel::new_place(create.into_inner(), &conn).await;
+    match works {
+    Ok(fuck) => return  status::Accepted(Some(format!("placed with {}",fuck.string))),
+    Err(_) => todo!(),
 }
+}
+
 #[get("/@system")]
 async fn system() -> serde_json::Value {
-    let A = Actor{id:1,kind:fediplace::PersonType::Application, preferred_username: todo!(), name: todo!(), inbox: todo!(), outbox: todo!(), public_key: todo!() };
+    let A = Actor::system();
     let j = serde_json::json!(&A);
     return j;
 }
