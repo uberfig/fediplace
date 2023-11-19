@@ -2,38 +2,36 @@
 
 pub mod protocol;
 
-#[macro_use]
-extern crate rocket;
+// #[macro_use]
+// extern crate rocket;
 #[macro_use]
 extern crate rocket_sync_db_pools;
 #[macro_use]
 extern crate diesel;
 
-use std::time::{SystemTime, UNIX_EPOCH};
-use chrono::DateTime;
-use chrono::NaiveDateTime;
+// use std::time::{SystemTime, UNIX_EPOCH};
+// use chrono::DateTime;
+// use chrono::NaiveDateTime;
 use reqwest::Client;
 use reqwest::IntoUrl;
-use rocket::data;
-use rocket::time::PrimitiveDateTime;
-use rocket::tokio::io::unix;
-use rocket::{
-    fairing::AdHoc,
-    // serde::{Deserialize, Serialize},
-    form::Form,
-    fs::{relative, FileServer},
-    request::FlashMessage,
-    response::{Flash, Redirect},
-    serde::json::Json,
-    tokio::time::{sleep, Duration},
-    Build,
-    Rocket,
-};
+// use rocket::data;
+// use rocket::{
+//     fairing::AdHoc,
+//     // serde::{Deserialize, Serialize},
+//     form::Form,
+//     fs::{relative, FileServer},
+//     request::FlashMessage,
+//     response::{Flash, Redirect},
+//     serde::json::Json,
+//     tokio::time::{sleep, Duration},
+//     Build,
+//     Rocket,
+// };
 use serde::{Deserialize, Serialize};
-use std::net::IpAddr;
+// use std::net::IpAddr;
 use url::Url;
 // use chrono::DateTime;
-use chrono::Utc;
+// use chrono::Utc;
 use protocol::public_key;
 // use rocket::DbConn;
 
@@ -156,23 +154,23 @@ pub struct CreateActivity {
     actor: Url,
     #[serde(rename = "type")]
     kind: ActivityType,
-    object: object,
+    object: Object,
 }
 
 #[derive(Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(crate = "rocket::serde")]
 #[serde(rename_all = "camelCase")]
-pub struct object {
+pub struct Object {
     id: Url,
     #[serde(rename = "type")]
     kind: ActivityType,
     content: String,
 }
 
-enum PixelCreator {
-    Federated(Actor),
-    System,
-}
+// enum PixelCreator {
+//     Federated(Actor),
+//     System,
+// }
 
 #[derive(Serialize, Queryable, Insertable, Debug, Clone, Selectable)]
 // #[serde(crate = "rocket::serde")]
@@ -236,7 +234,7 @@ pub fn parse_fucky(data: &str) -> Result<Fucky, FuckyParseError> {
 
 impl Pixel {
     pub async fn new_place(activity: CreateActivity, conn: &DbConn) -> Result<Fucky, FuckyParseError> {
-        use FuckyParseError as E;
+        // use FuckyParseError as E;
         let bruh = parse_fucky(&activity.object.content);
         let data;
         match bruh {
@@ -252,11 +250,11 @@ impl Pixel {
         let y = data.y as i32;
         let color = data.color as i32;
 
-        let dberr = conn.run(move |c| {
+        let _dberr = conn.run(move |c| {
             let p = Pixel { id: id as i32, x: x, y: y, color: color, user: 1, /* insert_time: SystemTime::now().as_sql() */};
             diesel::insert_into(pixels::dsl::pixels).values(&p).execute(c)
         }).await;
-        dbg!(dberr);
+        // dbg!(dberr);
         dbg!(&data);
         Ok(data)
     }
